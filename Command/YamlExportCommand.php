@@ -64,7 +64,6 @@ class YamlExportCommand extends ContainerAwareCommand
 
         if (!$isSql) {
             $metadata = $em->getMetadataFactory()->getMetadataFor($matches[1]);
-
             if (!$metadata) {
                 $output->writeln('<error>ERROR: Entity ' . $matches[1] . ' does not exist - are you sure you specified the right entity path?</error>');
 
