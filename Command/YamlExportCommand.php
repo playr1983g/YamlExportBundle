@@ -2,7 +2,6 @@
 
 namespace Psamatt\YamlExportBundle\Command;
 
-use Doctrine\Common\Util\Debug;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -95,7 +94,6 @@ class YamlExportCommand extends ContainerAwareCommand
                 $returnString .= '  -' . PHP_EOL;
                 foreach ($row as $fieldName => $fieldValue) {
                     $literalFlag = '';
-
 
                     if (is_null($fieldValue)) {
                         $fieldValue = '~';
