@@ -2,11 +2,13 @@
 
 namespace Psamatt\YamlExportBundle\Command;
 
+use Doctrine\Common\Util\Debug;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
 * Dump out database rows into yaml formatting for use in DBUnit testing
@@ -62,7 +64,8 @@ class YamlExportCommand extends ContainerAwareCommand
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         if (!$isSql) {
-            if (!$em->getMetadataFactory()->hasMetadataFor($matches[1])) {
+            $metadata = $em->getMetadataFactory()->getMetadataFor($matches[1]);
+            if (!$metadata) {
                 $output->writeln('<error>ERROR: Entity ' . $matches[1] . ' does not exist - are you sure you specified the right entity path?</error>');
 
                 return 0;
@@ -92,7 +95,8 @@ class YamlExportCommand extends ContainerAwareCommand
                 $returnString .= '  -' . PHP_EOL;
                 foreach ($row as $fieldName => $fieldValue) {
                     $literalFlag = '';
-                    
+
+
                     if (is_null($fieldValue)) {
                         $fieldValue = '~';
                     } elseif (is_object($fieldValue)) {
@@ -104,6 +108,8 @@ class YamlExportCommand extends ContainerAwareCommand
                         // Do have any newlines or line feeds?
                         $literalFlag = (strpos($fieldValue, '\r') !== false || strpos($fieldValue, '\n') !== false) ? '| ' : '';
                         $fieldValue = '"' . str_replace('"','\"',$fieldValue) . '"';
+                    } elseif(is_array($fieldValue)) {
+                        $fieldValue = Yaml::dump($fieldValue, 0);
                     }
 
                     // Output the key/value pair
