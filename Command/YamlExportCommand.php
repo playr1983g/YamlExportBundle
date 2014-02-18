@@ -64,6 +64,7 @@ class YamlExportCommand extends ContainerAwareCommand
 
         if (!$isSql) {
             $metadata = $em->getMetadataFactory()->getMetadataFor($matches[1]);
+
             if (!$metadata) {
                 $output->writeln('<error>ERROR: Entity ' . $matches[1] . ' does not exist - are you sure you specified the right entity path?</error>');
 
@@ -94,7 +95,7 @@ class YamlExportCommand extends ContainerAwareCommand
                 $returnString .= '  -' . PHP_EOL;
                 foreach ($row as $fieldName => $fieldValue) {
                     $literalFlag = '';
-
+                    
                     if (is_null($fieldValue)) {
                         $fieldValue = '~';
                     } elseif (is_object($fieldValue)) {
